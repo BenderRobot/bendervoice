@@ -93,14 +93,15 @@ def supp_balise(t_char): # supprime les balise HTML dans un tableau de character
 		 
 			
 def make_str(ordre,index,length): # decoupe un tableau de string a partir de l'argument "index" a "length"
-	request = [0]*((length - index) * 2)
+	request = [0]*(((length - index) * 2) - 1)
 	j = 0
 	while index <= (length-1):
 		request[j] = ordre[index]
 		index = index + 1
 		j = j + 1
-		request[j] = " "
-		j = j + 1
+		if j < len(request):
+			request[j] = " "
+			j = j + 1
 	return "".join(request)
 
 def make_ordre(ordre): # construit un tableau de string a partir du tableau de char 
@@ -112,7 +113,7 @@ def make_ordre(ordre): # construit un tableau de string a partir du tableau de c
 	k = 0
 	z = 0
 	while i < len(ordre):
-		if ordre[i] == " ":
+		if ordre[i] == " " and i > 0:
 			space_count = space_count + 1
 			i = i + 1
 		else:
@@ -145,14 +146,142 @@ def make_ordre(ordre): # construit un tableau de string a partir du tableau de c
 		k = 0
 	return new_ordre
 
-def make_date(index):
+def make_date(index,index2):
+	now = datetime.datetime.now()
 	date = [0]*2
-	if index == 0:
-		date[0] = datetime.datetime.now() - datetime.timedelta(days=1)
-		print date[0]
+	if index == 0 and index2 == "false": # aujourd'hui
+		date[0] = datetime.datetime(now.year, now.month, now.day)
+		date[1] = datetime.datetime(now.year, now.month, now.day)
+		print date
 		return date
-	elif index == 1:
-		return 0
+	elif index == 1 and index2 == "false": # demain
+		date[0] = datetime.datetime(now.year, now.month, now.day + 1)
+		date[1] = datetime.datetime(now.year, now.month, now.day + 1)
+		print date
+		return date
+	elif index == 1 and index2 == 4: # apres demain
+		date[0] = datetime.datetime(now.year, now.month, now.day + 2)
+		date[1] = datetime.datetime(now.year, now.month, now.day + 2)
+		print date
+		return date
+	elif index == 2 and index2 == 2 or index == 2 and index2 == "false": # ce weekend
+		day = time.strftime('%A',time.localtime())
+		if day == "Sunday":
+			from_dt = -1
+			to_dt = 0
+		elif day == "Monday":
+			from_dt = 5
+			to_dt = 6
+		elif day == "Tuesday":
+			from_dt = 4
+			to_dt = 5
+		elif day == "Wednesday":
+			from_dt = 3
+			to_dt = 4
+		elif day == "Thursday":
+			from_dt = 2
+			to_dt = 3
+		elif day == "Friday":
+			from_dt = 1
+			to_dt = 2
+		elif day == "Saturday":
+			from_dt = 0
+			to_dt = 1
+		date[0] = datetime.datetime(now.year, now.month, now.day + from_dt)
+		date[1] = datetime.datetime(now.year, now.month, now.day + to_dt)
+		print date
+		return date
+	elif index == 2 and index2 == 0: # le weekend prochain
+		day = time.strftime('%A',time.localtime())
+		if day == "Sunday":
+			from_dt = 6
+			to_dt = 7
+		elif day == "Monday":
+			from_dt = 12
+			to_dt = 13
+		elif day == "Tuesday":
+			from_dt = 11
+			to_dt = 12
+		elif day == "Wednesday":
+			from_dt = 10
+			to_dt = 11
+		elif day == "Thursday":
+			from_dt = 9
+			to_dt = 10
+		elif day == "Friday":
+			from_dt = 8
+			to_dt = 9
+		elif day == "Saturday":
+			from_dt = 7
+			to_dt = 8
+		date[0] = datetime.datetime(now.year, now.month, now.day + from_dt)
+		date[1] = datetime.datetime(now.year, now.month, now.day + to_dt)
+		print date
+		return date
+	elif index == 3 and index2 == 3: # cette semaine
+		day = time.strftime('%A',time.localtime())
+		if day == "Sunday":
+			from_dt = 0
+			to_dt = 0
+		elif day == "Monday":
+			from_dt = 0
+			to_dt = 6
+		elif day == "Tuesday":
+			from_dt = -1
+			to_dt = 5
+		elif day == "Wednesday":
+			from_dt = -2
+			to_dt = 4
+		elif day == "Thursday":
+			from_dt = -3
+			to_dt = 3
+		elif day == "Friday":
+			from_dt = -4
+			to_dt = 2
+		elif day == "Saturday":
+			from_dt = -5
+			to_dt = 1
+		date[0] = datetime.datetime(now.year, now.month, now.day + from_dt)
+		date[1] = datetime.datetime(now.year, now.month, now.day + to_dt)
+		print date
+		return date
+	elif index == 3 and index2 == 1: # la semaine prochaine
+		day = time.strftime('%A',time.localtime())
+		if day == "Sunday":
+			from_dt = 1
+			to_dt = 7
+		elif day == "Monday":
+			from_dt = 7
+			to_dt = 13
+		elif day == "Tuesday":
+			from_dt = 6
+			to_dt = 12
+		elif day == "Wednesday":
+			from_dt = 5
+			to_dt = 11
+		elif day == "Thursday":
+			from_dt = 4
+			to_dt = 10
+		elif day == "Friday":
+			from_dt = 3
+			to_dt = 9
+		elif day == "Saturday":
+			from_dt = 2
+			to_dt = 8
+		date[0] = datetime.datetime(now.year, now.month, now.day + from_dt)
+		date[1] = datetime.datetime(now.year, now.month, now.day + to_dt)
+		print date
+		return date
+	elif index == 4 and index2 == 2 or index == 4 and index2 == "false":
+		date[0] = datetime.datetime(now.year, now.month, 1)
+		date[1] = datetime.datetime(now.year, now.month + 1, 1)
+		print date
+		return date
+	elif index == 4 and index2 == 0:
+		date[0] = datetime.datetime(now.year, now.month + 1, 1)
+		date[1] = datetime.datetime(now.year, now.month + 2, 1)
+		print date
+		return date
 
 def sub_menu(): # affiche un sous-menu pour choisir une action dans une fonction
 	choix = raw_input("choix par < text > ou < speech > : ")
@@ -240,16 +369,23 @@ def search_youtube(ordre): # simple recherche youtube dans un fenetre iceweasel
 def search_cal(ordre): # cherche dans calendrier icloud
 	from pyicloud import PyiCloudService
 	format_date = [" "]*2
-	say_fr("je cherche dans votre agenda")
+	say_fr("connection au calendrier")
 	#api = PyiCloudService('blaurens31@gmail.com', 'Smok871005')
-	say_fr("connection a l'agenda, ok")
-	say_fr("quel date voulez vous consulter")
-	date = sub_menu()
-	date = make_ordre(date)
-	test = find_list(date,t_date)
-	format_date = make_date(test)
-	event = api.calendar.events(format_date[0],format_date[1])
-	say_fr(event)
+	say_fr("connection ok")
+	say_fr("je cherche dans votre agenda")
+	length = len(ordre)
+	if length > 5:
+		request = make_str(ordre,5,length)
+		say_fr(request)
+	else:
+		say_fr("quel date voulez vous consulter")
+		request = sub_menu()
+	request = make_ordre(request)
+	test = find_list(request,t_date)
+	test2 = find_list(request,t_adj)
+	format_date = make_date(test,test2)
+	#event = api.calendar.events(format_date[0],format_date[1])
+	#say_fr(event)
 
 def exe_ordre(ordre):
 	length = len(ordre)
@@ -314,9 +450,10 @@ def exe_ordre(ordre):
 	else:
 		say_fr("pas suffisament d'information")
 
-say_en("i'm Bender, lick my shiny metal ass")
+say_en("i'm Bender!")
 say_fr("Que puis-je faire pour vous")
-test = make_date(0)
+test = make_date(4,2)
+test = make_date(4,0)
 while exit == 0:
 	print("pour faire une demande ecrite, tapez le mot : < text >")
 	print("pour faire une demande oral, tapez le mot : < speech >")
