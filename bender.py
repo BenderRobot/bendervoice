@@ -107,6 +107,20 @@ def supp_spec(t_char):
 			j = j + 1
 		elif t_char[j] == ':':
 			j = j + 1
+		elif t_char[j] == ',':
+			j = j + 1
+		elif t_char[j] == 'u':
+			j = j + 1
+			if t_char[j] == "'":
+				j = j + 1
+			else:
+				j + j - 1
+		elif t_char[j] == "'":
+			j = j + 1
+			if t_char[j] == " ":
+				j = j - 1
+			else:
+				j + j - 1
 		else:
 			new_t_char[i] = t_char[j]
 			j = j + 1
@@ -296,9 +310,9 @@ def make_date(index,index2):
 def make_cal(event):
 	i = 0
 	count_event = 0
-	print("make cal action")
+	say_fr("traitement des événements....")
 	while i < len(event):
-		if event[i] == "u'startDate'":
+		if event[i] == "startDate":
 			count_event = count_event + 1
 			i = i + 1
 		else:
@@ -306,30 +320,93 @@ def make_cal(event):
 	i = 0
 	j = 0
 	k = 0
+	l = 0
 	t_event = [[" "]*3 for _ in range(count_event)]
-	print t_event
-	print count_event
+	t_cut = [""]*11
 	while j < count_event:
 		while k < len(event):
-			if event[k] == "u'startDate'":
-				k = k + 1
-				t_event[j][i] = event[k]
+			if event[k] == "startDate":
+				i = 0
+				t_cut[i] = "de "
 				i = i + 1
-				print("check start")
-			elif event[k] == "u'endDate'":
+				k = k + 5
+				t_cut[i] = event[k]
 				k = k + 1
-				t_event[j][i] = event[k]
 				i = i + 1
-				print("check end")
-			elif event[k] == "u'title'":
+				t_cut[i] = " heures "
+				i = i + 1
+				t_cut[i] = event[k]
+				k = k - 2
+				i = i + 1
+				t_cut[i] = ", le "
+				i = i + 1
+				t_cut[i] = event[k]
+				k = k - 1
+				i = i + 1
+				t_cut[i] = "/"
+				i = i + 1
+				t_cut[i] = event[k]
+				k = k - 1
+				i = i + 1
+				t_cut[i] = "/"
+				i = i + 1
+				t_cut[i] = event[k]
+				t_event[j][l] = "".join(t_cut)
+				l = l + 1
+				k = k + 6
+			elif event[k] == "endDate":
+				i = 0
+				t_cut[i] = "a "
+				i = i + 1
+				k = k + 5
+				t_cut[i] = event[k]
 				k = k + 1
-				t_event[j][i] = event[k]
 				i = i + 1
-				print("check title")
+				t_cut[i] = " heures "
+				i = i + 1
+				t_cut[i] = event[k]
+				k = k - 2
+				i = i + 1
+				t_cut[i] = ", le "
+				i = i + 1
+				t_cut[i] = event[k]
+				k = k - 1
+				i = i + 1
+				t_cut[i] = "/"
+				i = i + 1
+				t_cut[i] = event[k]
+				k = k - 1
+				i = i + 1
+				t_cut[i] = "/"
+				i = i + 1
+				t_cut[i] = event[k]
+				t_event[j][l] = "".join(t_cut)
+				l = l + 1
+				k = k + 6
+			elif event[k] == "title":
+				k = k + 1
+				i = 0
+				for i in range(len(t_cut)):
+					t_cut[i] = " "
+				i = 0
+				while event[k] != "localEndDate":
+					t_cut[i] = event[k]
+					i = i + 1
+					t_cut[i] = " "
+					i = i + 1
+					k = k + 1
+					if event[k] == " ":
+						k = k + 1
+						if event[k] == "localEndDate":
+							break
+						else:
+							k = k - 1
+				encode = "".join(t_cut)
+				t_event[j][l] = encode
+				l = 0
 				break
 			else:
 				k = k + 1
-		i = 0
 		j = j + 1
 	return t_event
 			
@@ -435,12 +512,14 @@ def search_cal(ordre): # cherche dans calendrier icloud
 	test2 = find_list(request,t_adj)
 	format_date = make_date(test,test2)
 	event = str(api.calendar.events(format_date[0],format_date[1]))
-	#event = str([{u'startDate': [20150415, 2015, 4, 15, 0, 0, 0], u'birthdayLastName': None, u'endDate': [20150416, 2015, 4, 16, 0, 0, 0], u'pGuid': u'home', u'recurrenceMaster': False, u'extendedDetailsAreIncluded': False, u'duration': 1440, u'birthdayCompanyName': None, u'guid': u'8DD8EFAB-FA3B-410F-8534-179FB150ED7B__20150415T000000', u'recurrence': u'8DD8EFAB-FA3B-410F-8534-179FB150ED7B*MME-RID', u'tz': None, u'title': u'Premier baiser avc ma ch\xe9rie', u'localEndDate': [20150416, 2015, 4, 16, 0, 0, 0], u'recurrenceException': False, u'birthdayShowAsCompany': None, u'etag': u'C=863@U=acd61672-3878-4663-8a73-e938237739e2', u'location': None, u'eventStatus': None, u'birthdayFirstName': None, u'readOnly': False, u'birthdayBirthDate': None, u'icon': 0, u'allDay': True, u'hasAttachments': False, u'localStartDate': [20150415, 2015, 4, 15, 0, 0, 0], u'birthdayNickname': None, u'birthdayIsYearlessBday': None, u'alarms': [u'8DD8EFAB-FA3B-410F-8534-179FB150ED7B__20150415T000000:8769D378-2E45-47F9-A029-5B732D0A6FD1']}])
-	event = event.decode('utf8')
 	event = supp_spec(event)
 	event = make_ordre(event)
 	event = make_cal(event)
-	print event
+	say_fr("vous avez " + str(len(event)) + " événements")
+	i = 0
+	while i < len(event):
+		say_fr(event[i])
+		i = i + 1
 
 def exe_ordre(ordre):
 	length = len(ordre)
