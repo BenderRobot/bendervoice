@@ -91,7 +91,28 @@ def supp_balise(t_char): # supprime les balise HTML dans un tableau de character
 			i = i + 1
 	return "".join(new_t_char)
 		 
-			
+def supp_spec(t_char):
+	new_t_char = [" "]*(len(t_char))
+	length = len(t_char)
+	i = 0
+	j = 0
+	while j <= (length-1):
+		if t_char[j] == '[':
+			j = j + 1
+		elif t_char[j] == ']':
+			j = j + 1
+		elif t_char[j] == '{':
+			j = j + 1
+		elif t_char[j] == '}':
+			j = j + 1
+		elif t_char[j] == ':':
+			j = j + 1
+		else:
+			new_t_char[i] = t_char[j]
+			j = j + 1
+			i = i + 1
+	return "".join(new_t_char)
+
 def make_str(ordre,index,length): # decoupe un tableau de string a partir de l'argument "index" a "length"
 	request = [0]*(((length - index) * 2) - 1)
 	j = 0
@@ -108,15 +129,18 @@ def make_ordre(ordre): # construit un tableau de string a partir du tableau de c
 	space_count = 0
 	count_char = 0
 	length = 0
+	space = 0
 	i = 0
 	j = 0
 	k = 0
 	z = 0
 	while i < len(ordre):
-		if ordre[i] == " " and i > 0:
+		if ordre[i] == " " and space == 0:
 			space_count = space_count + 1
+			space = 1
 			i = i + 1
 		else:
+			space = 0
 			i = i + 1
 	length = space_count + 1
 	new_ordre = [" "]*length
@@ -140,7 +164,7 @@ def make_ordre(ordre): # construit un tableau de string a partir du tableau de c
 		if j < len(ordre) and i < length:
 			if ordre[j] == " ":
 				j = j + 1
-		if z < len(ordre):
+		if z < len(ordre) and i < length:
 			if ordre[z] == " ":
 				z = z + 1
 		k = 0
@@ -148,141 +172,167 @@ def make_ordre(ordre): # construit un tableau de string a partir du tableau de c
 
 def make_date(index,index2):
 	now = datetime.datetime.now()
+	from_day = 0
+	to_day = 0
+	from_month = 0
+	to_month = 0	
 	date = [0]*2
 	if index == 0 and index2 == "false": # aujourd'hui
-		date[0] = datetime.datetime(now.year, now.month, now.day)
-		date[1] = datetime.datetime(now.year, now.month, now.day)
-		print date
-		return date
+		from_day = 0
+		to_day = 0
 	elif index == 1 and index2 == "false": # demain
-		date[0] = datetime.datetime(now.year, now.month, now.day + 1)
-		date[1] = datetime.datetime(now.year, now.month, now.day + 1)
-		print date
-		return date
+		from_day = 1
+		to_day = 1
 	elif index == 1 and index2 == 4: # apres demain
-		date[0] = datetime.datetime(now.year, now.month, now.day + 2)
-		date[1] = datetime.datetime(now.year, now.month, now.day + 2)
-		print date
-		return date
+		from_day = 2
+		to_day = 2
 	elif index == 2 and index2 == 2 or index == 2 and index2 == "false": # ce weekend
 		day = time.strftime('%A',time.localtime())
 		if day == "Sunday":
-			from_dt = -1
-			to_dt = 0
+			from_day = -1
+			to_day = 0
 		elif day == "Monday":
-			from_dt = 5
-			to_dt = 6
+			from_day = 5
+			to_day = 6
 		elif day == "Tuesday":
-			from_dt = 4
-			to_dt = 5
+			from_day = 4
+			to_day = 5
 		elif day == "Wednesday":
-			from_dt = 3
-			to_dt = 4
+			from_day = 3
+			to_day = 4
 		elif day == "Thursday":
-			from_dt = 2
-			to_dt = 3
+			from_day = 2
+			to_day = 3
 		elif day == "Friday":
-			from_dt = 1
-			to_dt = 2
+			from_day = 1
+			to_day = 2
 		elif day == "Saturday":
-			from_dt = 0
-			to_dt = 1
-		date[0] = datetime.datetime(now.year, now.month, now.day + from_dt)
-		date[1] = datetime.datetime(now.year, now.month, now.day + to_dt)
-		print date
-		return date
+			from_day = 0
+			to_day = 1
 	elif index == 2 and index2 == 0: # le weekend prochain
 		day = time.strftime('%A',time.localtime())
 		if day == "Sunday":
-			from_dt = 6
-			to_dt = 7
+			from_day = 6
+			to_day = 7
 		elif day == "Monday":
-			from_dt = 12
-			to_dt = 13
+			from_day = 12
+			to_day = 13
 		elif day == "Tuesday":
-			from_dt = 11
-			to_dt = 12
+			from_day = 11
+			to_day = 12
 		elif day == "Wednesday":
-			from_dt = 10
-			to_dt = 11
+			from_day = 10
+			to_day = 11
 		elif day == "Thursday":
-			from_dt = 9
-			to_dt = 10
+			from_day = 9
+			to_day = 10
 		elif day == "Friday":
-			from_dt = 8
-			to_dt = 9
+			from_day = 8
+			to_day = 9
 		elif day == "Saturday":
-			from_dt = 7
-			to_dt = 8
-		date[0] = datetime.datetime(now.year, now.month, now.day + from_dt)
-		date[1] = datetime.datetime(now.year, now.month, now.day + to_dt)
-		print date
-		return date
-	elif index == 3 and index2 == 3: # cette semaine
+			from_day = 7
+			to_day = 8
+	elif index == 3 and index2 == 3 or index == 3 and index2 == "false": # cette semaine
 		day = time.strftime('%A',time.localtime())
 		if day == "Sunday":
-			from_dt = 0
-			to_dt = 0
+			from_day = 0
+			to_day = 0
 		elif day == "Monday":
-			from_dt = 0
-			to_dt = 6
+			from_day = 0
+			to_day = 6
 		elif day == "Tuesday":
-			from_dt = -1
-			to_dt = 5
+			from_day = -1
+			to_day = 5
 		elif day == "Wednesday":
-			from_dt = -2
-			to_dt = 4
+			from_day = -2
+			to_day = 4
 		elif day == "Thursday":
-			from_dt = -3
-			to_dt = 3
+			from_day = -3
+			to_day = 3
 		elif day == "Friday":
-			from_dt = -4
-			to_dt = 2
+			from_day = -4
+			to_day = 2
 		elif day == "Saturday":
-			from_dt = -5
-			to_dt = 1
-		date[0] = datetime.datetime(now.year, now.month, now.day + from_dt)
-		date[1] = datetime.datetime(now.year, now.month, now.day + to_dt)
-		print date
-		return date
+			from_day = -5
+			to_day = 1
 	elif index == 3 and index2 == 1: # la semaine prochaine
 		day = time.strftime('%A',time.localtime())
 		if day == "Sunday":
-			from_dt = 1
-			to_dt = 7
+			from_day = 1
+			to_day = 7
 		elif day == "Monday":
-			from_dt = 7
-			to_dt = 13
+			from_day = 7
+			to_day = 13
 		elif day == "Tuesday":
-			from_dt = 6
-			to_dt = 12
+			from_day = 6
+			to_day = 12
 		elif day == "Wednesday":
-			from_dt = 5
-			to_dt = 11
+			from_day = 5
+			to_day = 11
 		elif day == "Thursday":
-			from_dt = 4
-			to_dt = 10
+			from_day = 4
+			to_day = 10
 		elif day == "Friday":
-			from_dt = 3
-			to_dt = 9
+			from_day = 3
+			to_day = 9
 		elif day == "Saturday":
-			from_dt = 2
-			to_dt = 8
-		date[0] = datetime.datetime(now.year, now.month, now.day + from_dt)
-		date[1] = datetime.datetime(now.year, now.month, now.day + to_dt)
-		print date
-		return date
-	elif index == 4 and index2 == 2 or index == 4 and index2 == "false":
-		date[0] = datetime.datetime(now.year, now.month, 1)
-		date[1] = datetime.datetime(now.year, now.month + 1, 1)
-		print date
-		return date
-	elif index == 4 and index2 == 0:
-		date[0] = datetime.datetime(now.year, now.month + 1, 1)
-		date[1] = datetime.datetime(now.year, now.month + 2, 1)
-		print date
-		return date
+			from_day = 2
+			to_day = 8
+	elif index == 4 and index2 == 2 or index == 4 and index2 == "false": # ce mois
+		from_day = -now.day + 1
+		to_day = -now.day + 1
+		from_month = 0
+		to_month = 1		
+	elif index == 4 and index2 == 0: # mois prochain
+		from_day = -now.day + 1
+		to_day = -now.day + 1
+		from_month = 1
+		to_month = 2
+	date[0] = datetime.datetime(now.year, now.month + from_month, now.day + from_day)
+	date[1] = datetime.datetime(now.year, now.month + to_month, now.day + to_day)
+	#print date
+	return date
 
+def make_cal(event):
+	i = 0
+	count_event = 0
+	print("make cal action")
+	while i < len(event):
+		if event[i] == "u'startDate'":
+			count_event = count_event + 1
+			i = i + 1
+		else:
+			i = i + 1
+	i = 0
+	j = 0
+	k = 0
+	t_event = [[" "]*3 for _ in range(count_event)]
+	print t_event
+	print count_event
+	while j < count_event:
+		while k < len(event):
+			if event[k] == "u'startDate'":
+				k = k + 1
+				t_event[j][i] = event[k]
+				i = i + 1
+				print("check start")
+			elif event[k] == "u'endDate'":
+				k = k + 1
+				t_event[j][i] = event[k]
+				i = i + 1
+				print("check end")
+			elif event[k] == "u'title'":
+				k = k + 1
+				t_event[j][i] = event[k]
+				i = i + 1
+				print("check title")
+				break
+			else:
+				k = k + 1
+		i = 0
+		j = j + 1
+	return t_event
+			
 def sub_menu(): # affiche un sous-menu pour choisir une action dans une fonction
 	choix = raw_input("choix par < text > ou < speech > : ")
 	if choix == "text":
@@ -370,7 +420,7 @@ def search_cal(ordre): # cherche dans calendrier icloud
 	from pyicloud import PyiCloudService
 	format_date = [" "]*2
 	say_fr("connection au calendrier")
-	#api = PyiCloudService('blaurens31@gmail.com', 'Smok871005')
+	api = PyiCloudService('blaurens31@gmail.com', 'Smok871005')
 	say_fr("connection ok")
 	say_fr("je cherche dans votre agenda")
 	length = len(ordre)
@@ -384,8 +434,13 @@ def search_cal(ordre): # cherche dans calendrier icloud
 	test = find_list(request,t_date)
 	test2 = find_list(request,t_adj)
 	format_date = make_date(test,test2)
-	#event = api.calendar.events(format_date[0],format_date[1])
-	#say_fr(event)
+	event = str(api.calendar.events(format_date[0],format_date[1]))
+	#event = str([{u'startDate': [20150415, 2015, 4, 15, 0, 0, 0], u'birthdayLastName': None, u'endDate': [20150416, 2015, 4, 16, 0, 0, 0], u'pGuid': u'home', u'recurrenceMaster': False, u'extendedDetailsAreIncluded': False, u'duration': 1440, u'birthdayCompanyName': None, u'guid': u'8DD8EFAB-FA3B-410F-8534-179FB150ED7B__20150415T000000', u'recurrence': u'8DD8EFAB-FA3B-410F-8534-179FB150ED7B*MME-RID', u'tz': None, u'title': u'Premier baiser avc ma ch\xe9rie', u'localEndDate': [20150416, 2015, 4, 16, 0, 0, 0], u'recurrenceException': False, u'birthdayShowAsCompany': None, u'etag': u'C=863@U=acd61672-3878-4663-8a73-e938237739e2', u'location': None, u'eventStatus': None, u'birthdayFirstName': None, u'readOnly': False, u'birthdayBirthDate': None, u'icon': 0, u'allDay': True, u'hasAttachments': False, u'localStartDate': [20150415, 2015, 4, 15, 0, 0, 0], u'birthdayNickname': None, u'birthdayIsYearlessBday': None, u'alarms': [u'8DD8EFAB-FA3B-410F-8534-179FB150ED7B__20150415T000000:8769D378-2E45-47F9-A029-5B732D0A6FD1']}])
+	event = event.decode('utf8')
+	event = supp_spec(event)
+	event = make_ordre(event)
+	event = make_cal(event)
+	print event
 
 def exe_ordre(ordre):
 	length = len(ordre)
@@ -452,8 +507,6 @@ def exe_ordre(ordre):
 
 say_en("i'm Bender!")
 say_fr("Que puis-je faire pour vous")
-test = make_date(4,2)
-test = make_date(4,0)
 while exit == 0:
 	print("pour faire une demande ecrite, tapez le mot : < text >")
 	print("pour faire une demande oral, tapez le mot : < speech >")
