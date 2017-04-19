@@ -426,4 +426,3 @@ def sub_menu(): # affiche un sous-menu pour choisir une action dans une fonction
 			say_fr("je n'est pas compris")
 			ordre = 0
 	return str(ordre)
-

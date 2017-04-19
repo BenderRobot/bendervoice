@@ -95,9 +95,9 @@ def check_weather(ordre):
 			t_weather[3][8] = hauteur_precip
 			t_weather[3][9] = vent
 			t_weather[3][10] = tx_humidite
-
+	print("===============================================================================")
 	if "aujourd'hui" in ordre or "moment" in ordre: #aujourd'hui
-		say_fr("La météo pour aujourd’hui, " + str(t_weather[0][3]) + " " + str(t_weather[0][0]) + "/" + str(t_weather[0][1]) + "/" + str(t_weather[0][2]) + " :")
+		say_fr("La météo pour, " + str(t_weather[0][3]) + " " + str(t_weather[0][0]) + "/" + str(t_weather[0][1]) + "/" + str(t_weather[0][2]) + " :")
 		say_fr("En ce moment, " + current_weather.encode('utf8') + ", la température, est de, " + str(current_temp) + " °Celsius, et la pression atmosphérique, " + str(pressure_trend) + ", est de, " + str(pressure_mb) + "mb.")
 		say_fr("Les températures irons de " + str(t_weather[0][5]) + "°Celsius, le matin, à " + str(t_weather[0][4]) + "°Celsius, maximum, avec un taux d'humidité de, " + str(t_weather[0][10]) + "% et un vent à " + str(t_weather[0][9]) + " km/heure.")
 		if t_weather[0][7] > 0: 
@@ -113,8 +113,9 @@ def check_weather(ordre):
 		while i < 4:
 			say_fr(str(t_weather[i][3]) + " " + str(t_weather[i][0]) + "/" + str(t_weather[i][1]) + "/" + str(t_weather[i][2]) + " :")
 			say_fr(str(t_weather[i][6]) + ", les températures irons de " + str(t_weather[i][5]) + "°Celsius, le matin, à " + str(t_weather[i][4]) + "°Celsius, maximum, avec un taux d'humidité de " + str(t_weather[i][10]) + "% et un vent à " + str(t_weather[i][9]) + " km/h")
-		if t_weather[i][7] > 0: 
-			say_fr("Il y aura " + str(t_weather[i][7]) + "% de chance, qu'il pleuve et les précipitations sera égal à environ, " + str(t_weather[i][8]) + " millimètre.")
+			if t_weather[i][7] > 0: 
+				say_fr("Il y aura " + str(t_weather[i][7]) + "% de chance, qu'il pleuve et les précipitations sera égal à environ, " + str(t_weather[i][8]) + " millimètre.")
 			i = i + 1
 	else:
 		print "error weather's date"
+	print("===============================================================================")

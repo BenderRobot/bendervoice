@@ -5,7 +5,7 @@
 from make_find_supp import *
 from speak_listen import *
 from f_search import *
-#from f_reveil import *
+from f_calendar import *
 from f_music import *
 from weather import *
 from tab import *
@@ -14,7 +14,6 @@ from tab import *
 
 def exe_ordre(ordre):
 	length = len(ordre)
-	say_fr("éxécution")
 	if ordre[1] == t_ordre[0] and length > 4 or ordre[1] == t_ordre[1] and length > 4: #cherche
 		media = find_word(ordre[3],t_media)
 		if media == "false" and length > 4:
@@ -27,20 +26,20 @@ def exe_ordre(ordre):
 			elif ordre[3] == t_media[4]:
 				search_youtube(ordre)
 			elif ordre[4] == t_media[5]:
-				search_cal(ordre)
+				calendar_search(ordre)
 			### ajouter recherche ###
 		else:
 			say_fr("je ne connait pas ce media")
 	elif ordre[1] == t_ordre[2] and length >= 3 or ordre[1] == t_ordre[3] and length >= 3: #ouvre ou lance
 		index = 2
 		app = find_word(ordre[index],t_app)
-		if app == "false":
+		if app == "false" and length < index:
 			index = 3
 			app = find_word(ordre[index],t_app)
 		if app == "ok":
-			if ordre[index] == t_app[0] or ordre[index] == t_app[2]:
+			if ordre[index] == t_app[0] or ordre[index] == t_app[2] or ordre[index] == t_app[4] or ordre[index] == t_app[5]:
 				say_fr("j'ouvre l'application internet")
-				os.system('iceweasel www.google.fr')
+				os.system('chromium-browser www.google.fr')
 			elif ordre[index] == t_app[1]:
 				length = len(ordre)
 				if index == (length - 1):
@@ -55,16 +54,19 @@ def exe_ordre(ordre):
 			say_fr("je ne connait pas cette application")
 	elif ordre[1] == t_ordre[4] and length >= 3: #allume
 		domo = find_word(ordre[3],t_domotique)
-		if domo == "ok":
-			if ordre[3] == t_domotique[0]:
+		room = find_word(ordre[length-1],t_room)
+		if domo == "ok" or room == "ok":
+			if ordre[3] == t_domotique[0] or room == "ok": #lumière
 				say_fr("j'allume la lumiére")
 				if ordre[length-1] == t_room[0]:
 					say_fr("du salon")
 				elif ordre[length-1] == t_room[1]:
-					say_fr("du bureau ")
+					say_fr("du bureau")
+				elif ordre[length-1] == t_room[2]:
+					say_fr("de la cuisine")
 				else:
 					say_fr("le bureau ou le salon?")
-			elif ordre[3] == t_domotique[1] or ordre[3] == t_domotique[2]:
+			elif ordre[3] == t_domotique[1] or ordre[3] == t_domotique[2]: #pc
 				say_fr("j'allume l'ordinateur")
 				if ordre[length-1] == t_room[0]:
 					say_fr("du salon")
@@ -72,13 +74,37 @@ def exe_ordre(ordre):
 					say_fr("du bureau ")
 				else:
 					say_fr("le bureau ou le salon?")
-			elif ordre[3] == t_domotique[3]:
+			elif ordre[3] == t_domotique[3]: #tele
 				say_fr("j'allume la télé")
-			elif ordre[2] == t_domotique[4] or ordre[3] == t_domotique[5]:
-				say_fr("j'allume le retroprojecteur")
 		else:
 			say_fr("je ne connait pas ce périphérique")
-	elif ordre[1] == t_ordre[5] and length >= 3 or ordre[1] == t_ordre[6] and length >= 3:
+	elif ordre[1] == t_ordre[5] and length >= 3: #éteins
+		domo = find_word(ordre[3],t_domotique)
+		room = find_word(ordre[length-1],t_room)
+		if domo == "ok" or room == "ok":
+			if ordre[3] == t_domotique[0] or room == "ok": #lumière
+				say_fr("j'étiens la lumiére")
+				if ordre[length-1] == t_room[0]:
+					say_fr("du salon")
+				elif ordre[length-1] == t_room[1]:
+					say_fr("du bureau ")
+				elif ordre[length-1] == t_room[2]:
+					say_fr("de la cuisine")
+				else:
+					say_fr("le bureau ou le salon?")
+			elif ordre[3] == t_domotique[1] or ordre[3] == t_domotique[2]:
+				say_fr("j'étiens l'ordinateur")
+				if ordre[length-1] == t_room[0]:
+					say_fr("du salon")
+				elif ordre[length-1] == t_room[1]:
+					say_fr("du bureau ")
+				else:
+					say_fr("le bureau ou le salon?")
+			elif ordre[3] == t_domotique[3]:
+				say_fr("j'etiens la télé")
+		else:
+			say_fr("je ne connait pas ce périphérique")
+	elif ordre[1] == t_ordre[6] and length >= 3 or ordre[1] == t_ordre[7] and length >= 3: #meteo 
 		index = 2
 		media = find_word(ordre[index],t_media)
 		if media == "false":
@@ -93,7 +119,7 @@ def exe_ordre(ordre):
 			check_weather(ordre)
 		else:
 			say_fr("je ne connait pas ce media")
-	elif ordre[1] == t_ordre[7] and length >= 3:
+	elif ordre[1] == t_ordre[8] and length >= 3:
 		ordre = make_str(ordre,4,length)
 		f_reveil(ordre)
 	else:

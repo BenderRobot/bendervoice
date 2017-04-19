@@ -15,11 +15,11 @@ def say_en(something): # parle en englais
 	os.system('espeak -s 180 -p 99 -v en "{0}" --stdout|paplay'.format(something))
 
 def listen(): # ecoute et ecrit
-	r = sr.Recognizer(language = "fr-FR")
+	r = sr.Recognizer()
 	with sr.Microphone() as source:               
   		audio = r.listen(source)
 	try:
-  		print(r.recognize(audio))  
+  		print(r.recognize_google(audio, language = "fr-FR"))  
 	except LookupError:                            # speech is unintelligible
     		print("pas compris")
 		return "pas compris"

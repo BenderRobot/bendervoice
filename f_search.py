@@ -6,10 +6,9 @@ import os
 import sys
 import time
 import urllib
-import pyicloud
 import datetime
 import wikipedia
-import json as m_json
+import json
 from speak_listen import *
 from make_find_supp import *
 from tab import *
@@ -22,8 +21,11 @@ def search_web(ordre): # cherche sur google les 4 premier resultat et ouvre le l
 	say_fr("je cherche sur internet, " + request)
 	query = request
 	query = urllib.urlencode ( { 'q' : query } )
-	response = urllib.urlopen ( 'http://ajax.googleapis.com/ajax/services/search/web?v=1.0&' + query ).read()
-	json = m_json.loads ( response )
+	reponse = urllib.urlopen ( 'http://api.duckduckgo.com/?' + query + 'format=json')
+	os.system('chromium-browser https://duckduckgo.com/?' + query)
+	print reponse
+	data = json.load(reponse)   
+	print data
 	results = json [ 'responseData' ] [ 'results' ]
 	say_fr("les 4 premiers resultats sont :")
 	print("===============================================================================")
@@ -71,7 +73,7 @@ def search_wiki(ordre): # cherche sur Wiki, affiche un resume et ouvre un page w
 	open_link = sub_menu()
 	open_link = make_ordre(open_link)
 	if open_link[0] == t_ordre[2] or open_link[0] == t_ordre[3]:
-		os.system('iceweasel "{0}"'.format(result.url))
+		os.system('chromium-browser "{0}"'.format(result.url))
 	else:
 		print "je n'est pas compris le numero"
 
@@ -80,33 +82,4 @@ def search_youtube(ordre): # simple recherche youtube dans un fenetre iceweasel
 	request = make_str(ordre,4,length)
 	say_fr("je cherche sur youtube, " + request)
 	say_fr("ouverture de la page youtube")
-	os.system('iceweasel https://www.youtube.com/results?search_query="{0}"'.format(request))
-
-def search_cal(ordre): # cherche dans calendrier icloud
-	from pyicloud import PyiCloudService
-	format_date = [" "]*2
-	say_fr("connection au calendrier")
-	api = PyiCloudService('blaurens31@gmail.com', 'Smok871005')
-	say_fr("connection ok")
-	length = len(ordre)
-	if length > 5:
-		request = make_str(ordre,5,length)
-		say_fr("je cherche dans ton agenda les événements pour " + request)
-	else:
-		say_fr("quel date veux tu consulter")
-		request = sub_menu()
-	request = make_ordre(request)
-	test = find_list(request,t_date)
-	test2 = find_list(request,t_adj)
-	format_date = make_date(test,test2)
-	event = str(api.calendar.events(format_date[0],format_date[1]))
-	event = supp_spec(event)
-	event = make_ordre(event)
-	event = make_cal(event)
-	print("===============================================================================")
-	say_fr("tu a " + str(len(event)) + " événements")
-	i = 0
-	while i < len(event):
-		say_fr(event[i])
-		i = i + 1
-	print("===============================================================================")
+	os.system('chromium-browser https://www.youtube.com/results?search_query="{0}"'.format(request))
